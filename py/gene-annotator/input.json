@@ -1,7 +1,0 @@
-{
-    "sequences": [
-        {"id": "seq1", "sequence": "ATCGATACGATGCGTACGATCGTAGCTAGCTAGCTAGCTAGC", "reference": true},
-        {"id": "seq2", "sequence": "ATCGATACGATGCGTACGATCGTAGCTAGCTAGCTAGCTAGC"},
-        {"id": "seq3", "sequence": "ATCGATACCATGCGTACGAT--TAGCTAGCGTGGCTAGCTAC"}
-    ]
-}
