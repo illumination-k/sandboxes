@@ -1,0 +1,20 @@
+[project]
+name = "gene-annotator"
+version = "0.1.0"
+description = "Add a short description here"
+authors = [
+    { name = "illumination-k", email = "illumination.k.27@gmail.com" }
+]
+dependencies = ["biopython~=1.81", "pydantic~=1.10.8"]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = ["black~=23.3.0", "isort~=5.12.0"]
+[tool.hatch.metadata]
+allow-direct-references = true
