@@ -3,8 +3,7 @@ import xml.etree.ElementTree as ET
 from typing import Literal, Optional, Union
 
 from gene_annotator.schema import ConfigSchema
-from gene_annotator.sequence_data import (Annotation, SequenceData,
-                                          compute_match)
+from gene_annotator.sequence_data import Annotation, SequenceData, compute_match
 
 number = Union[int, float]
 

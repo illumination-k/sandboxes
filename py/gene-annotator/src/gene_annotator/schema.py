@@ -22,7 +22,7 @@ class SequenceSchema(BaseModel):
     id: str
     sequence: str
     reference: bool = False
-    annotations: list[AnnotationSchema] = []
+    annotations: Optional[list[AnnotationSchema]] = None
 
 
 class InputSchema(BaseModel):

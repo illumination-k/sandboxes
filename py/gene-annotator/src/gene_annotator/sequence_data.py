@@ -3,7 +3,7 @@ from typing import Literal, Optional, Sequence
 
 from Bio.Seq import Seq  # type: ignore
 
-from gene_annotator.schema import SequenceSchema
+from gene_annotator.schema import SequenceSchema, AnnotationSchema
 
 
 def compute_match(reference: Sequence[str], sequence: Sequence[str]):
@@ -33,6 +33,16 @@ class Annotation:
     color: str = "blue"
     text: Optional[str] = None
     position: Literal["top", "bottom"] = "top"
+
+    @staticmethod
+    def from_schema(schema: AnnotationSchema) -> "Annotation":
+        return Annotation(
+            start=schema.start,
+            end=schema.end,
+            color=schema.color,
+            text=schema.text,
+            position=schema.position,
+        )
 
 
 class SequenceData:
@@ -118,9 +128,16 @@ class SequenceData:
 
     @staticmethod
     def from_schema(sequence: SequenceSchema) -> "SequenceData":
+        annotations = None
+        if sequence.annotations is not None:
+            annotations = [
+                Annotation.from_schema(annotation)
+                for annotation in sequence.annotations
+            ]
+
         return SequenceData(
             id=sequence.id,
             nucleotide=sequence.sequence,
             reference=sequence.reference,
-            annotations=sequence.annotations,
+            annotations=annotations,
         )
