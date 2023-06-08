@@ -1,10 +1,12 @@
-from typing import Optional, Literal
-import xml.etree.ElementTree as ET
-from Bio.Seq import Seq
 import dataclasses
+from typing import Literal, Optional, Sequence
+
+from Bio.Seq import Seq  # type: ignore
+
+from gene_annotator.schema import SequenceSchema
 
 
-def compute_match(reference: str, sequence: str):
+def compute_match(reference: Sequence[str], sequence: Sequence[str]):
     match = []
     for i in range(len(reference)):
         match.append(reference[i] == sequence[i])
@@ -26,11 +28,11 @@ class AminoAcidElement:
 
 @dataclasses.dataclass(frozen=True)
 class Annotation:
-    start: int
-    end: int
-    color: str
-    text: str
-    position: Literal["top", "bottom"]
+    start: int = 0
+    end: int = 0
+    color: str = "blue"
+    text: Optional[str] = None
+    position: Literal["top", "bottom"] = "top"
 
 
 class SequenceData:
@@ -54,7 +56,7 @@ class SequenceData:
             self.translate()
 
     def translate(self):
-        codon: list[tuple[str, i]] = []
+        codon: list[tuple[str, int]] = []
         for i, nuc in enumerate(self.nucleotide[self.frame :]):
             if len(codon) == 3:
                 amino_acid = str(Seq("".join([c[0] for c in codon])).translate())
@@ -97,7 +99,7 @@ class SequenceData:
                 for elem in self.protein
                 if i <= elem.position < i + size
             ]
-            print(self.annotations)
+
             chunk_annotation = [a for a in self.annotations if i <= a.start < i + size]
             chunks.append(
                 SequenceData(
@@ -113,3 +115,12 @@ class SequenceData:
 
     def __repr__(self) -> str:
         return f"nucleotide: {self.nucleotide}\nprotein: {self.protein}"
+
+    @staticmethod
+    def from_schema(sequence: SequenceSchema) -> "SequenceData":
+        return SequenceData(
+            id=sequence.id,
+            nucleotide=sequence.sequence,
+            reference=sequence.reference,
+            annotations=sequence.annotations,
+        )

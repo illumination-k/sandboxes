@@ -1,5 +1,8 @@
 import argparse
-from gene_annotator.annotator import create_svg
+
+from gene_annotator.annotator import GeneAnnotatorSVG
+from gene_annotator.schema import InputSchema
+from gene_annotator.sequence_data import SequenceData
 
 
 def main():
@@ -8,7 +11,14 @@ def main():
     parser.add_argument("--output", "-o", type=str, required=True, help="Output file")
     args = parser.parse_args()
 
-    create_svg(args.input, args.output)
+    input = InputSchema.parse_file(args.input)
+
+    sequence_data_list = [SequenceData.from_schema(s) for s in input.sequences]
+
+    annotator = GeneAnnotatorSVG(
+        config=input.config, sequence_data_list=sequence_data_list
+    )
+    annotator.write_svg(args.output)
 
 
 if __name__ == "__main__":

@@ -1,8 +1,10 @@
 import json
-from typing import Union, Literal
 import xml.etree.ElementTree as ET
+from typing import Literal, Optional, Union
 
-from gene_annotator.sequence_data import SequenceData, compute_match, Annotation
+from gene_annotator.schema import ConfigSchema
+from gene_annotator.sequence_data import (Annotation, SequenceData,
+                                          compute_match)
 
 number = Union[int, float]
 
@@ -11,13 +13,14 @@ class GeneAnnotatorSVG:
     def __init__(
         self,
         sequence_data_list: list[SequenceData],
+        config: ConfigSchema,
         start: int = 0,
         offset: int = 10,
         fontsize: int = 20,
         block_width: int = 20,
         viewBox: str = "0 0 1500 750",
     ) -> None:
-        self.block_width = block_width
+        self.block_width = config.block_width
         self.blocks: list[list[SequenceData]] = list(
             map(
                 list,
@@ -25,16 +28,16 @@ class GeneAnnotatorSVG:
             )
         )
 
-        self.max_id_length = max(
+        max_id_length = max(
             len(sequence_data.id) for sequence_data in sequence_data_list
         )
 
-        self.fontsize = fontsize
+        self.fontsize = config.fontsize
 
-        self.current_x = (self.max_id_length + 1) * self.fontsize
+        self.current_x = (max_id_length + 1) * self.fontsize
         self.current_y = fontsize * 1.5
-        self.offset = offset
-        self.start = start
+        self.offset = config.offset
+        self.start = config.start
 
         self.root = ET.Element(
             "svg", xmins="http://www.w3.org/2000/svg", viewBox=viewBox
@@ -44,7 +47,7 @@ class GeneAnnotatorSVG:
 
     def write_text(
         self,
-        text: str,
+        text: Optional[str],
         x: number,
         y: number,
         fill: str = "black",
@@ -59,6 +62,11 @@ class GeneAnnotatorSVG:
         ] = "central",
         **kwargs,
     ):
+        text_attribute: dict[str, str] = {
+            "text-anchor": text_acnhor,
+            "dominant-baseline": dominant_baseline,
+        }
+        text_attribute.update(kwargs)
         text_element = ET.SubElement(
             self.root,
             "text",
@@ -66,9 +74,9 @@ class GeneAnnotatorSVG:
             y=str(y),
             fill=fill,
             style=f"font-size: {self.fontsize}px",
-            **{"text-anchor": text_acnhor, "dominant-baseline": dominant_baseline},
-            **kwargs,
+            **text_attribute,
         )
+
         text_element.text = text
 
     def write_ticks(self, start: int):
@@ -278,21 +286,3 @@ class GeneAnnotatorSVG:
         self.write_blocks()
         tree = ET.ElementTree(self.root)
         tree.write(output_file, encoding="utf-8", xml_declaration=True)
-
-
-def create_svg(input_file, output_file):
-    with open(input_file, "r") as f:
-        data = json.load(f)
-
-    sequence_data_list = [
-        SequenceData(
-            nucleotide=d["sequence"],
-            id=d["id"],
-            reference=d.get("reference", False),
-            annotations=[Annotation(**a) for a in d.get("annotation", [])],
-        )
-        for d in data["sequences"]
-    ]
-
-    svg = GeneAnnotatorSVG(sequence_data_list, block_width=20)
-    svg.write_svg(output_file)

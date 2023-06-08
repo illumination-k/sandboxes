@@ -1,10 +1,15 @@
 {
+  "config": {
+    "block_width": 100,
+    "offset": 10,
+    "start": 300
+  },
   "sequences": [
     {
       "id": "Tak-1 genome",
       "sequence": "ATCGATACGATGCGTACGATCGTAGCTAGCTAGCTAGCTAGC",
       "reference": true,
-      "annotation": [
+      "annotations": [
         {
           "start": 5,
           "end": 10,
