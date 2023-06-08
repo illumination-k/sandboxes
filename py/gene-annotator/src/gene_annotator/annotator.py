@@ -1,9 +1,8 @@
-import json
 import xml.etree.ElementTree as ET
 from typing import Literal, Optional, Union
 
 from gene_annotator.schema import ConfigSchema
-from gene_annotator.sequence_data import Annotation, SequenceData, compute_match
+from gene_annotator.sequence_data import SequenceData, compute_match
 
 number = Union[int, float]
 
@@ -27,18 +26,25 @@ class GeneAnnotatorSVG:
             len(sequence_data.id) for sequence_data in sequence_data_list
         )
 
+        # Font settings
         self.fontsize = config.fontsize
+        self.fontfamily = config.fontfamily
 
+        ## Calculate the position of the first text
         self.current_x = (max_id_length + 1) * self.fontsize
         self.current_y = self.fontsize * 1.5
+        
+        ## ticks settings
         self.offset = config.offset
         self.start = config.start
+        self.tick_index = 0
 
+        ## translation settings
+        self.with_translation = config.with_translation
+        
         self.root = ET.Element(
             "svg", xmins="http://www.w3.org/2000/svg", viewBox=viewBox
         )
-
-        self.tick_index = 0
 
     def write_text(
         self,
@@ -60,7 +66,9 @@ class GeneAnnotatorSVG:
         text_attribute: dict[str, str] = {
             "text-anchor": text_acnhor,
             "dominant-baseline": dominant_baseline,
+            "font-family": self.fontfamily,
         }
+        
         text_attribute.update(kwargs)
         text_element = ET.SubElement(
             self.root,
@@ -96,7 +104,6 @@ class GeneAnnotatorSVG:
         self,
         sequence_data: SequenceData,
         reference: SequenceData,
-        with_translation: bool = False,
     ):
         top_annotations = [
             annotation
@@ -124,7 +131,7 @@ class GeneAnnotatorSVG:
                     **{"stroke-width": "5"},
                 )
 
-            self.current_y += self.fontsize * 1.1
+            self.current_y += self.fontsize * 1.3
 
         # write IDs
         self.write_text(
@@ -152,7 +159,7 @@ class GeneAnnotatorSVG:
             if annotation.position == "bottom"
         ]
         if len(bottom_annotations) > 0:
-            self.current_y += self.fontsize * 0.1
+            self.current_y += self.fontsize * 0.3
             for annotation in bottom_annotations:
                 self.write_text(
                     annotation.text,
@@ -175,8 +182,8 @@ class GeneAnnotatorSVG:
             self.current_y += self.fontsize
 
         # write protein
-        if with_translation:
-            self.current_y += self.fontsize
+        if self.with_translation:
+            self.current_y += self.fontsize * 1.3
             match_protein = compute_match(
                 [p.text for p in sequence_data.protein],
                 [p.text for p in reference.protein],
@@ -268,7 +275,7 @@ class GeneAnnotatorSVG:
 
         for sequence_data in block:
             self.write_sequence_data(
-                sequence_data=sequence_data, reference=reference, with_translation=True
+                sequence_data=sequence_data, reference=reference
             )
             self.current_y += self.fontsize * 1.5
 

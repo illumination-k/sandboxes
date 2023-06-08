@@ -3,7 +3,8 @@
     "fontfamily": "Arial",
     "block_width": 100,
     "offset": 10,
-    "start": 300
+    "start": 300,
+    "with_translation": true
   },
   "sequences": [
     {

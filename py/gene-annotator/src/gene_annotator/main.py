@@ -12,7 +12,7 @@ def main():
     args = parser.parse_args()
 
     input = InputSchema.parse_file(args.input)
-
+    print(input.config)
     sequence_data_list = [SequenceData.from_schema(s) for s in input.sequences]
 
     annotator = GeneAnnotatorSVG(
