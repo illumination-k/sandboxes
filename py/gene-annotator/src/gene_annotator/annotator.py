@@ -13,17 +13,13 @@ class GeneAnnotatorSVG:
         self,
         sequence_data_list: list[SequenceData],
         config: ConfigSchema,
-        start: int = 0,
-        offset: int = 10,
-        fontsize: int = 20,
-        block_width: int = 20,
         viewBox: str = "0 0 1500 750",
     ) -> None:
         self.block_width = config.block_width
         self.blocks: list[list[SequenceData]] = list(
             map(
                 list,
-                zip(*[seq.chunk(block_width) for seq in sequence_data_list]),
+                zip(*[seq.chunk(config.block_width) for seq in sequence_data_list]),
             )
         )
 
@@ -34,7 +30,7 @@ class GeneAnnotatorSVG:
         self.fontsize = config.fontsize
 
         self.current_x = (max_id_length + 1) * self.fontsize
-        self.current_y = fontsize * 1.5
+        self.current_y = self.fontsize * 1.5
         self.offset = config.offset
         self.start = config.start
 
