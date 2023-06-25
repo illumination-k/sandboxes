@@ -1,0 +1,42 @@
+{
+  "config": {
+    "fontfamily": "Arial",
+    "block_width": 100,
+    "offset": 10,
+    "start": 300
+  },
+  "sequences": [
+    {
+      "id": "Tak-1 genome",
+      "sequence": "ATCGATACGATGCGTACGATCGTAGCTAGCTAGCTAGCTAGC",
+      "reference": true,
+      "annotations": [
+        {
+          "start": 5,
+          "end": 10,
+          "color": "blue",
+          "text": "gRNA_f",
+          "position": "top"
+        },
+        {
+          "start": 8,
+          "end": 13,
+          "color": "blue",
+          "text": "gRNA_r",
+          "position": "bottom"
+        }
+      ]
+    },
+    { "id": "seq12", "sequence": "ATCGATACGATGGGTACGATCTTAGCTACCTAGCTAGCTAGA",
+    "annotations": [
+      {
+        "start": 5,
+        "end": 10,
+        "color": "red",
+        "position": "top"
+      }
+    ]
+  },
+    { "id": "seq322", "sequence": "ATCGATACCATGCGTACGAT--TAGCTAGCGTGGCTAGCTAC" }
+  ]
+}
