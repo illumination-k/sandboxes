@@ -63,14 +63,16 @@ def semantic_similarity_matrix(terms: list[str], similarity: IGoTermSemanticSimi
 
     return matrix
 
-def similarity_graph(terms: list[str]) -> nx.Graph:
-    g = nx.Graph()
-    sim_matrix = semantic_similarity_matrix(terms)
-    n = len(terms)
 
-    for i in range(n):
-        for j in range(j):
-            g.add_edge(terms[i], terms[j], sim_matrix[i][j])
+class SimilarityGraph:
+    def __init__(self, terms: list[str], seed: int = 0) -> None:
+            self.g = nx.Graph()
+            self.sim_matrix = semantic_similarity_matrix(terms)
+            n = len(terms)
 
-    return g
+            for i in range(n):
+                for j in range(j):
+                    self.g.add_edge(terms[i], terms[j], self.sim_matrix[i][j])
 
+            self.layout = nx.layout.spring_layout(self.g)
+            self.cluster = nx.community.louvain_communities(self.g, seed)

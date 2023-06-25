@@ -1,0 +1,126 @@
+syntax = "proto3";
+
+package auth;
+
+service Auth {
+  rpc CreateUser(CreateUserRequest) returns (UserResponse) {}
+  rpc GetUser(GetUserRequest) returns (UserResponse) {}
+  rpc GetUserByEmail(GetUserByEmailRequest) returns (UserResponse) {}
+  rpc GetUserByAccount(GetUserByAccountRequest) returns (UserResponse) {}
+  rpc UpdateUser(UpdateUserRequest) returns (UserResponse) {}
+  rpc DeleteUser(DeleteUserRequest) returns (EmptyResponse) {}
+  rpc LinkAccount(LinkAccountRequest) returns (EmptyResponse) {}
+  rpc UnlinkAccount(UnlinkAccountRequest) returns (EmptyResponse) {}
+  rpc CreateSession(CreateSessionRequest) returns (SessionResponse) {}
+  rpc GetSessionAndUser(GetSessionAndUserRequest) returns (SessionAndUserResponse) {}
+  rpc UpdateSession(UpdateSessionRequest) returns (SessionResponse) {}
+  rpc DeleteSession(DeleteSessionRequest) returns (EmptyResponse) {}
+  rpc CreateVerificationToken(CreateVerificationTokenRequest) returns (EmptyResponse) {}
+  rpc UseVerificationToken(UseVerificationTokenRequest) returns (EmptyResponse) {}
+}
+
+message CreateUserRequest {
+  User user = 1;
+}
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message GetUserByEmailRequest {
+  string email = 1;
+}
+
+message GetUserByAccountRequest {
+  string providerAccountId = 1;
+  string provider = 2;
+}
+
+message UpdateUserRequest {
+  User user = 1;
+}
+
+message DeleteUserRequest {
+  string userId = 1;
+}
+
+message LinkAccountRequest {
+  Account account = 1;
+}
+
+message UnlinkAccountRequest {
+  string providerAccountId = 1;
+  string provider = 2;
+}
+
+message CreateSessionRequest {
+  string sessionToken = 1;
+  string userId = 2;
+  string expires = 3;
+}
+
+message GetSessionAndUserRequest {
+  string sessionToken = 1;
+}
+
+message UpdateSessionRequest {
+  string sessionToken = 1;
+}
+
+message DeleteSessionRequest {
+  string sessionToken = 1;
+}
+
+message CreateVerificationTokenRequest {
+  string identifier = 1;
+  string expires = 2;
+  string token = 3;
+}
+
+message UseVerificationTokenRequest {
+  string identifier = 1;
+  string token = 2;
+}
+
+// Response messages
+message UserResponse {
+  User user = 1;
+}
+
+message SessionResponse {
+  Session session = 1;
+}
+
+message SessionAndUserResponse {
+  Session session = 1;
+  User user = 2;
+}
+
+message EmptyResponse {}
+
+// Other type definitions
+message User {
+  string id = 1;
+  string email = 2;
+  repeated Account accounts = 3;
+  repeated Session sessions = 4;
+  // Add other fields as needed
+}
+
+message Account {
+  string providerAccountId = 1;
+  string provider = 2;
+  // Add other fields as needed
+}
+
+message Session {
+  string sessionToken = 1;
+  string userId = 2;
+  string expires = 3;
+}
+
+message VerificationToken {
+    string identifier = 1;
+    string token = 2;
+    string expires = 3;
+}
